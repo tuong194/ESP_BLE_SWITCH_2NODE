@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "esp_ble_switch_2",
-    "project_version":    "1",
+    "project_version":    "9ef77dc-dirty",
     "project_path":       "E:/ESP32/My_Code/esp_ble_switch_2",
     "idf_path":           "C:/ESP_IDF/v5.3.2/esp-idf",
     "build_dir":          "E:/ESP32/My_Code/esp_ble_switch_2/build",
@@ -1195,7 +1195,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [ "example_init" ],
             "file": "E:/ESP32/My_Code/esp_ble_switch_2/build/esp-idf/main/libmain.a",
-            "sources": [ "E:/ESP32/My_Code/esp_ble_switch_2/main/main.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_BLE/rd_ble_mesh.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_BLE/rd_message_control.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_Control/rd_control_led_rl.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_Peripheral/rd_gpio.c" ],
+            "sources": [ "E:/ESP32/My_Code/esp_ble_switch_2/main/main.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_BLE/rd_ble_mesh.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_BLE/rd_message_control.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_BLE/rd_message_type.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_BLE/rd_type_device.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_Control/rd_control_led_rl.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_Peripheral/rd_gpio.c", "E:/ESP32/My_Code/esp_ble_switch_2/main/RD_Peripheral/rd_flash.c" ],
             "include_dirs": [ "." ]
         },
         "mbedtls": {

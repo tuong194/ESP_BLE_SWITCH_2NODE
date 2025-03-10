@@ -2,14 +2,6 @@
 
 #define TAG "RD_BLE"
 
-// extern struct _led_state led_state[3];
-#define CID_ESP 0x0211
-
-#define ESP_BLE_MESH_VND_MODEL_ID_CLIENT 0x0000
-#define ESP_BLE_MESH_VND_MODEL_ID_SERVER 0x0001
-
-#define ESP_BLE_MESH_VND_MODEL_OP_SEND ESP_BLE_MESH_MODEL_OP_3(0xE0, CID_ESP)
-#define ESP_BLE_MESH_VND_MODEL_OP_STATUS ESP_BLE_MESH_MODEL_OP_3(0xE1, CID_ESP)
 
 static uint8_t dev_uuid[ESP_BLE_MESH_OCTET16_LEN] = {0xaa, 0xbb};
 
@@ -33,31 +25,34 @@ static esp_ble_mesh_cfg_srv_t config_server = {
 };
 
 /*--------------------------scene-----------------------------*/
-// static esp_ble_mesh_scenes_state_t scene_state = {
-//     .scene_count = 0, // Bắt đầu với 0 scene
-// };
+/*
+static esp_ble_mesh_scenes_state_t scene_state = {
+    .scene_count = 0, // Bắt đầu với 0 scene
+    .scenes = {0},
+};
 
-// ESP_BLE_MESH_MODEL_PUB_DEFINE(scene_srv_pub, 2, ROLE_NODE);
-// static esp_ble_mesh_scene_srv_t scene_srv_data = {
-//     .rsp_ctrl.get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
-//     .rsp_ctrl.set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
-//     .state = &scene_state,
-// };
+ESP_BLE_MESH_MODEL_PUB_DEFINE(scene_srv_pub, 2+3, ROLE_NODE);
+static esp_ble_mesh_scene_srv_t scene_srv_data = {
+    .rsp_ctrl.get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+    .rsp_ctrl.set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+    .state = &scene_state,
+};
 
-// static esp_ble_mesh_scenes_state_t scene_state_setup = {
-//     .scene_count = 0, // Bắt đầu với 0 scene
-// };
-// ESP_BLE_MESH_MODEL_PUB_DEFINE(scene_setup_srv_pub, 2, ROLE_NODE);
+static esp_ble_mesh_scenes_state_t scene_state_setup = {
+    .scene_count = 0, // Bắt đầu với 0 scene
+    .scenes = {0},
+};
+ESP_BLE_MESH_MODEL_PUB_DEFINE(scene_setup_srv_pub, 2+3, ROLE_NODE);
 
-// static esp_ble_mesh_scene_setup_srv_t scene_setup_srv_data = {
-//     .rsp_ctrl.get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
-//     .rsp_ctrl.set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
-//     .state = &scene_state_setup,
-// };
-
+static esp_ble_mesh_scene_setup_srv_t scene_setup_srv_data = {
+    .rsp_ctrl.get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+    .rsp_ctrl.set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+    .state = &scene_state_setup,
+};
+*/
 
 /*--------------------------onoff-----------------------------*/
-ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_0, 2 + 3, ROLE_NODE);
+ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_0, 2, ROLE_NODE);
 static esp_ble_mesh_gen_onoff_srv_t onoff_server_0 = {
     .rsp_ctrl = {
         .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
@@ -65,7 +60,7 @@ static esp_ble_mesh_gen_onoff_srv_t onoff_server_0 = {
     },
 };
 
-ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_1, 2 + 3, ROLE_NODE);
+ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_1, 2, ROLE_NODE);
 static esp_ble_mesh_gen_onoff_srv_t onoff_server_1 = {
     .rsp_ctrl = {
         .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
@@ -76,7 +71,7 @@ static esp_ble_mesh_gen_onoff_srv_t onoff_server_1 = {
 static esp_ble_mesh_model_t root_models[] = {
     ESP_BLE_MESH_MODEL_CFG_SRV(&config_server),
     ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_0, &onoff_server_0), // onoff server
-    // ESP_BLE_MESH_MODEL_SCENE_SRV(&scene_srv_pub, &scene_srv_data), // Scene Server: call, store scene
+    // ESP_BLE_MESH_MODEL_SCENE_SRV(&scene_srv_pub, &scene_srv_data), // Scene Server: call, store scene (can provisioner)
     // ESP_BLE_MESH_MODEL_SCENE_SETUP_SRV(&scene_setup_srv_pub, &scene_setup_srv_data), //RD_NOTE: node tự add, del scene
 };
 
@@ -85,20 +80,22 @@ static esp_ble_mesh_model_t extern_models1[] = {
 };
 
 static esp_ble_mesh_model_op_t vnd_op[] = {
-    ESP_BLE_MESH_MODEL_OP(ESP_BLE_MESH_VND_MODEL_OP_SEND, 2),
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_TYPE_SEND, 2),    //RD_NOTE: config opcode vender
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_MESS_CONTROL, 2),
     ESP_BLE_MESH_MODEL_OP_END,
 };
 
 static esp_ble_mesh_model_op_t vnd_op1[] = {
-    ESP_BLE_MESH_MODEL_OP(ESP_BLE_MESH_VND_MODEL_OP_SEND, 2),
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_TYPE_SEND, 2),
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_MESS_CONTROL, 2),
     ESP_BLE_MESH_MODEL_OP_END,
 };
 
-static esp_ble_mesh_model_t vnd_models[] = {
+esp_ble_mesh_model_t vnd_models[] = {
     ESP_BLE_MESH_VENDOR_MODEL(CID_ESP, ESP_BLE_MESH_VND_MODEL_ID_SERVER, vnd_op, NULL, NULL),
 };
 
-static esp_ble_mesh_model_t vnd_models1[] = {
+esp_ble_mesh_model_t vnd_models1[] = {
     ESP_BLE_MESH_VENDOR_MODEL(CID_ESP, ESP_BLE_MESH_VND_MODEL_ID_SERVER, vnd_op1, NULL, NULL),
 };
 /*---------------------*/
@@ -126,7 +123,7 @@ static void prov_complete(uint16_t net_idx, uint16_t addr, uint8_t flags, uint32
     // esp_ble_mesh_node_provisioned_store();
     // bt_mesh_store_net();
 
-    // blink_led_prov_success();
+    //blink_led_prov_success();
 }
 static void rd_kick_out(void)
 {
@@ -215,18 +212,11 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
     switch (event)
     {
     case ESP_BLE_MESH_MODEL_OPERATION_EVT:
-        if (param->model_operation.opcode == ESP_BLE_MESH_VND_MODEL_OP_SEND)
+        if (param->model_operation.opcode == RD_OPCODE_TYPE_SEND)
         {
-            uint16_t header = *(uint16_t *)param->model_operation.msg; // message
-            ESP_LOGI(TAG, "Recv 0x%06" PRIx32 ", header 0x%04x", param->model_operation.opcode, header);
+            RD_Message_Type(param);
+        }else if(param->model_operation.opcode == RD_OPCODE_MESS_CONTROL){
             RD_Message_Control(param);
-            esp_err_t err = esp_ble_mesh_server_model_send_msg(&vnd_models[0],
-                                                               param->model_operation.ctx, ESP_BLE_MESH_VND_MODEL_OP_STATUS,
-                                                               sizeof(header), (uint8_t *)&header);
-            if (err)
-            {
-                ESP_LOGE(TAG, "Failed to send message 0x%06x", ESP_BLE_MESH_VND_MODEL_OP_STATUS);
-            }
         }
         break;
     case ESP_BLE_MESH_MODEL_SEND_COMP_EVT:
@@ -316,12 +306,13 @@ static esp_err_t ble_mesh_init(void)
     esp_err_t err;
 
     esp_ble_mesh_register_prov_callback(example_ble_mesh_provisioning_cb);
-    esp_ble_mesh_register_config_server_callback(example_ble_mesh_config_server_cb);
+    esp_ble_mesh_register_config_server_callback(example_ble_mesh_config_server_cb);   
     esp_ble_mesh_register_custom_model_callback(example_ble_mesh_custom_model_cb);     // vender
     esp_ble_mesh_register_generic_server_callback(example_ble_mesh_generic_server_cb); // sig: generic model onoff
     //esp_ble_mesh_register_time_scene_server_callback(ble_mesh_time_scene_server_callback);
+    
 
-        err = esp_ble_mesh_init(&provision, &composition);
+    err = esp_ble_mesh_init(&provision, &composition);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to initialize mesh stack");

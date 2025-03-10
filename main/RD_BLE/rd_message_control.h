@@ -1,5 +1,5 @@
-#ifndef C7D09179_9FDB_4800_9BE0_61E2CDB7924B
-#define C7D09179_9FDB_4800_9BE0_61E2CDB7924B
+#ifndef C434178E_93F0_4189_904F_009EF2B68090
+#define C434178E_93F0_4189_904F_009EF2B68090
 
 #include <stdio.h>
 #include <string.h>
@@ -10,8 +10,10 @@
 #include "esp_ble_mesh_local_data_operation_api.h"
 
 #include "../RD_Control/rd_control_led_rl.h"
+#include "rd_type_device.h"
+#include "../RD_lib.h"
 
-void rd_mess_on_off_led(esp_ble_mesh_model_t *model, esp_ble_mesh_msg_ctx_t *ctx, uint8_t onoff);
-void RD_Message_Control(esp_ble_mesh_model_cb_param_t *param);
+void RD_Message_Control(esp_ble_mesh_model_cb_param_t *param); 
+void rd_rsp_opcode_E2(esp_ble_mesh_model_cb_param_t *param, uint8_t *par);
 
-#endif /* C7D09179_9FDB_4800_9BE0_61E2CDB7924B */
+#endif /* C434178E_93F0_4189_904F_009EF2B68090 */

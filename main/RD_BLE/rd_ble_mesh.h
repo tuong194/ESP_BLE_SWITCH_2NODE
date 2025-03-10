@@ -20,6 +20,17 @@
 #include "ble_mesh_example_init.h"
 
 #include "rd_message_control.h"
+#include "rd_message_type.h"
+
+#define CID_ESP                         0x0211
+#define RD_OPCODE_TYPE_SEND            ESP_BLE_MESH_MODEL_OP_3(0xE0, CID_ESP)
+#define RD_OPCDOE_TYPE_RSP             ESP_BLE_MESH_MODEL_OP_3(0xE1, CID_ESP)
+#define RD_OPCODE_MESS_CONTROL         ESP_BLE_MESH_MODEL_OP_3(0xE2, CID_ESP)
+#define RD_OPCODE_RSP_FOR_E2           ESP_BLE_MESH_MODEL_OP_3(0xE3, CID_ESP)
+
+#define ESP_BLE_MESH_VND_MODEL_ID_CLIENT 0x0000
+#define ESP_BLE_MESH_VND_MODEL_ID_SERVER 0x0001
+
 
 void rd_init_ble(void);
 

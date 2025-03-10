@@ -1,59 +1,45 @@
 #include "rd_message_control.h"
+#include "rd_ble_mesh.h"
 
+#define TAG "RD_MESS_CONTROL"
 
-extern rd_led_state led_state[NUM_ELEMENT];
-#define TAG "RD_MESS"
+extern esp_ble_mesh_model_t vnd_models[];
+extern esp_ble_mesh_model_t vnd_models1[];
 
-static void example_change_led_state(esp_ble_mesh_model_t *model,
-                                     esp_ble_mesh_msg_ctx_t *ctx, uint8_t onoff)                  
+void RD_Message_Control(esp_ble_mesh_model_cb_param_t *param)  // E2
 {
-    uint16_t primary_addr = esp_ble_mesh_get_primary_element_address();
-    uint8_t elem_count = esp_ble_mesh_get_element_count();
-    uint8_t i;
-
-    if (ESP_BLE_MESH_ADDR_IS_UNICAST(ctx->recv_dst))
-    {
-        for (i = 0; i < elem_count; i++)
-        {
-            if (ctx->recv_dst == (primary_addr + i))
-            {
-                rd_led_relay_operation(i, onoff);
-            }
-        }
-    }
-    else if (ESP_BLE_MESH_ADDR_IS_GROUP(ctx->recv_dst))
-    {
-        if (esp_ble_mesh_is_model_subscribed_to_group(model, ctx->recv_dst))
-        {
-            uint8_t num_ele =  model->element->element_addr - primary_addr;
-            printf("onoff group, element: %u\n", num_ele);
-            rd_led_relay_operation(num_ele, onoff);
-        }
-    }
-    else if (ctx->recv_dst == 0xFFFF)
-    {
-        
-        for (i = 0; i < NUM_ELEMENT; i++)
-        {
-            rd_led_relay_operation(i, onoff);
-        }
-    }
-}
-
-
-void rd_mess_on_off_led(esp_ble_mesh_model_t *model, esp_ble_mesh_msg_ctx_t *ctx, uint8_t onoff){
-    example_change_led_state(model, ctx, onoff);
-}
-
-void RD_Message_Control(esp_ble_mesh_model_cb_param_t *param)
-{
+    uint8_t *buff_rsp;
     uint8_t *buf_rec = NULL;
     buf_rec = param->model_operation.msg;
-    printf("msg_size: %u, data_rec: ", param->model_operation.length);
-    for (uint8_t i = 0; i < param->model_operation.length ; i++)
+
+    ESP_LOGI(TAG,"msg_size: %u, data_rec: ", param->model_operation.length);
+    for (uint8_t i = 0; i < param->model_operation.length; i++)
     {
         printf("0x%02x ", buf_rec[i]);
     }
     printf("\n");
-    
+
+    uint16_t header = *(uint16_t *)param->model_operation.msg; // message
+    ESP_LOGI(TAG, "Recv opcode 0x%06" PRIx32 ", header 0x%04x", param->model_operation.opcode, header);
+
+    switch (header)
+    {
+    case 0x0001:
+
+        break;
+    default:
+        ESP_LOGI(TAG, "unknown header!!");
+        break;
+    }
+}
+
+void rd_rsp_opcode_E2(esp_ble_mesh_model_cb_param_t *param, uint8_t *par)
+{
+    esp_err_t err = esp_ble_mesh_server_model_send_msg(&vnd_models[0],
+                                                       param->model_operation.ctx, RD_OPCODE_RSP_FOR_E2,
+                                                       sizeof(par), par);
+    if (err)
+    {
+        ESP_LOGE(TAG, "Failed to send message 0x%06x", RD_OPCODE_RSP_FOR_E2);
+    }
 }
