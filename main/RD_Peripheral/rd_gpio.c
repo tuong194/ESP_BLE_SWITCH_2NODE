@@ -1,8 +1,7 @@
 #include "rd_gpio.h"
 
-gpio_num_t BUTTON_PIN_ARR[NUM_ELEMENT] = {BUTTON_PIN1, BUTTON_PIN2};
-gpio_num_t LED_PIN_ARR[NUM_ELEMENT] = {LED_1, LED_2};
-gpio_num_t RELAY_PIN_ARR[NUM_ELEMENT] = {RELAY1_PIN, RELAY2_PIN};
+gpio_num_t BUTTON_PIN_ARR[NUM_ELEMENT] = {BUTTON_PIN1, BUTTON_PIN3, BUTTON_PIN4, BUTTON_PIN2};
+gpio_num_t RELAY_PIN_ARR[NUM_ELEMENT] = {RELAY1_PIN, RELAY2_PIN, RELAY3_PIN, RELAY4_PIN};
 
 static void gpio_set_pin_input(gpio_num_t GPIO_NUM, gpio_int_type_t INTR_TYPE)
 {
@@ -33,17 +32,14 @@ void rd_gpio_init(void)
 {
     for (uint8_t i = 0; i < NUM_ELEMENT; i++)
     {
-        gpio_set_pin_output(LED_PIN_ARR[i]);
         gpio_set_pin_input(BUTTON_PIN_ARR[i], GPIO_INTR_DISABLE);
         gpio_set_pin_output(RELAY_PIN_ARR[i]);
     }
+    gpio_set_pin_output(LED_DATA);
+    gpio_set_pin_output(LED_CLK);
     gpio_set_pin_output(RESET_TOUCH_PIN);
-    gpio_set_pin_input(DETECT_ZERO_PIN, GPIO_INTR_NEGEDGE);
+    //gpio_set_pin_input(DETECT_ZERO_PIN, GPIO_INTR_NEGEDGE);
     gpio_set_level(RESET_TOUCH_PIN, TOUCH_ACTIVE_POW);
+    gpio_set_level(LED_CLK, 1);
 }
 
-uint8_t rd_read_btn(gpio_num_t pin_btn){
-    uint8_t stt = gpio_get_level(pin_btn);
-    printf("Button %d: %d\n", pin_btn, stt);
-    return stt;
-}

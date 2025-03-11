@@ -11,6 +11,8 @@
 #include "esp_timer.h"
 
 #include "../RD_Peripheral/rd_gpio.h"
+#include "rd_button.h"
+#include "LC8823.h"
 
 #define LED_ON      0
 #define LED_OFF     1
@@ -20,11 +22,6 @@
 #define	NUM_CHECK_DETECH_MAX		150
 #define TIME_DETECT_ON		6000	//us
 #define TIME_DETECT_OFF		4800	//us
-
-typedef struct {
-    uint8_t current;
-    uint8_t target;
-}rd_led_state;
 
 typedef struct {
     uint8_t current;

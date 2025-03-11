@@ -68,6 +68,22 @@ static esp_ble_mesh_gen_onoff_srv_t onoff_server_1 = {
     },
 };
 
+ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_2, 2, ROLE_NODE);
+static esp_ble_mesh_gen_onoff_srv_t onoff_server_2 = {
+    .rsp_ctrl = {
+        .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+        .set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+    },
+};
+
+ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_3, 2, ROLE_NODE);
+static esp_ble_mesh_gen_onoff_srv_t onoff_server_3 = {
+    .rsp_ctrl = {
+        .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+        .set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,
+    },
+};
+
 static esp_ble_mesh_model_t root_models[] = {
     ESP_BLE_MESH_MODEL_CFG_SRV(&config_server),
     ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_0, &onoff_server_0), // onoff server
@@ -77,6 +93,14 @@ static esp_ble_mesh_model_t root_models[] = {
 
 static esp_ble_mesh_model_t extern_models1[] = {
     ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_1, &onoff_server_1),
+};
+
+static esp_ble_mesh_model_t extern_models2[] = {
+    ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_2, &onoff_server_2),
+};
+
+static esp_ble_mesh_model_t extern_models3[] = {
+    ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_3, &onoff_server_3),
 };
 
 static esp_ble_mesh_model_op_t vnd_op[] = {
@@ -91,6 +115,18 @@ static esp_ble_mesh_model_op_t vnd_op1[] = {
     ESP_BLE_MESH_MODEL_OP_END,
 };
 
+static esp_ble_mesh_model_op_t vnd_op2[] = {
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_TYPE_SEND, 2),    //RD_NOTE: config opcode vender
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_MESS_CONTROL, 2),
+    ESP_BLE_MESH_MODEL_OP_END,
+};
+
+static esp_ble_mesh_model_op_t vnd_op3[] = {
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_TYPE_SEND, 2),
+    ESP_BLE_MESH_MODEL_OP(RD_OPCODE_MESS_CONTROL, 2),
+    ESP_BLE_MESH_MODEL_OP_END,
+};
+
 esp_ble_mesh_model_t vnd_models[] = {
     ESP_BLE_MESH_VENDOR_MODEL(CID_ESP, ESP_BLE_MESH_VND_MODEL_ID_SERVER, vnd_op, NULL, NULL),
 };
@@ -98,11 +134,21 @@ esp_ble_mesh_model_t vnd_models[] = {
 esp_ble_mesh_model_t vnd_models1[] = {
     ESP_BLE_MESH_VENDOR_MODEL(CID_ESP, ESP_BLE_MESH_VND_MODEL_ID_SERVER, vnd_op1, NULL, NULL),
 };
+
+esp_ble_mesh_model_t vnd_models2[] = {
+    ESP_BLE_MESH_VENDOR_MODEL(CID_ESP, ESP_BLE_MESH_VND_MODEL_ID_SERVER, vnd_op2, NULL, NULL),
+};
+
+esp_ble_mesh_model_t vnd_models3[] = {
+    ESP_BLE_MESH_VENDOR_MODEL(CID_ESP, ESP_BLE_MESH_VND_MODEL_ID_SERVER, vnd_op3, NULL, NULL),
+};
 /*---------------------*/
 
 static esp_ble_mesh_elem_t elements[] = {
     ESP_BLE_MESH_ELEMENT(0, root_models, vnd_models),
     ESP_BLE_MESH_ELEMENT(0, extern_models1, vnd_models1),
+    ESP_BLE_MESH_ELEMENT(0, extern_models2, vnd_models2),
+    ESP_BLE_MESH_ELEMENT(0, extern_models3, vnd_models3),
 };
 
 static esp_ble_mesh_comp_t composition = {
@@ -122,8 +168,7 @@ static void prov_complete(uint16_t net_idx, uint16_t addr, uint8_t flags, uint32
     ESP_LOGI(TAG, "flags 0x%02x, iv_index 0x%08" PRIx32, flags, iv_index);
     // esp_ble_mesh_node_provisioned_store();
     // bt_mesh_store_net();
-
-    //blink_led_prov_success();
+    // blink_led_prov_success();
 }
 static void rd_kick_out(void)
 {
@@ -361,3 +406,4 @@ void rd_init_ble(void)
         printf("un provision\n");
     }
 }
+

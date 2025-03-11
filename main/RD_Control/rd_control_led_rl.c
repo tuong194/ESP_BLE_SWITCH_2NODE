@@ -5,22 +5,12 @@
 QueueHandle_t rd_queue;
 static int64_t last_time_crl_relay = 0;
 
-
-extern gpio_num_t BUTTON_PIN_ARR[NUM_ELEMENT];
-extern gpio_num_t LED_PIN_ARR[NUM_ELEMENT];
 extern gpio_num_t RELAY_PIN_ARR[NUM_ELEMENT];
-
-rd_led_state led_state[NUM_ELEMENT] = {
-    { LED_OFF, LED_OFF },
-    { LED_OFF, LED_OFF },
-};
 
 rd_relay_state relay_state[NUM_ELEMENT] = {
     { RELAY_OFF, RELAY_OFF },
     { RELAY_OFF, RELAY_OFF },
 };
-
-
 
 void delay_us(uint32_t us){
     esp_rom_delay_us(us);
@@ -32,7 +22,7 @@ uint8_t rd_exceed_us(int64_t ref, int64_t span_ms)
 }
 
 uint8_t read_detectzero_pin(void){
-    uint8_t stt = gpio_get_level(DETECT_ZERO_PIN);
+    uint8_t stt = 0;//gpio_get_level(DETECT_ZERO_PIN);
     return stt;
 }
 
@@ -60,14 +50,7 @@ void rd_wait_detect_zero(void){
     last_time_crl_relay = esp_timer_get_time();
     
 }
-
-static void rd_set_led_hw(gpio_num_t pin_led, uint8_t stt){
-    if(stt){
-        gpio_set_level(pin_led, LED_ON);
-    }else{
-        gpio_set_level(pin_led, LED_OFF);
-    }
-} 
+ 
 
 static void rd_set_relay_hw(gpio_num_t pin_relay, uint8_t stt){
     
@@ -81,10 +64,7 @@ static void rd_set_relay_hw(gpio_num_t pin_relay, uint8_t stt){
 
 void rd_led_relay_operation(uint8_t element, uint8_t onoff)
 {
-    //rd_set_led_hw(LED_PIN_ARR[element], onoff);
-    // rd_ele_cnt = element;
     relay_state[element].target = onoff;
-    led_state[element].target = onoff;
 
     rd_queue_led_relay queue_send;
     queue_send.ele_cnt = element;
@@ -95,49 +75,52 @@ void rd_led_relay_operation(uint8_t element, uint8_t onoff)
 }
 
 void update_control_led_relay(void){
-    uint8_t element = 0;
+    uint8_t element = 0, stt =0;
     rd_queue_led_relay queue_rec;
     
-    if(xQueueReceive(rd_queue, &queue_rec, portMAX_DELAY)){  //pdMS_TO_TICKS(1), portMAX_DELAY
+    if(xQueueReceive(rd_queue, &queue_rec, pdMS_TO_TICKS(1))){  //pdMS_TO_TICKS(1), portMAX_DELAY
         element = queue_rec.ele_cnt;
+        stt = queue_rec.target;
         //printf("queue con %d phan tu\n", uxQueueMessagesWaiting(rd_queue));
         printf("onoff ele: %u\n", element);
-        if(led_state[element].current != led_state[element].target){
-            rd_set_led_hw(LED_PIN_ARR[element], led_state[element].target);
-            led_state[element].current = led_state[element].target;
+        led_set_stt(element, stt);
+        led_set_control(element);
+    #if 0
+        if(relay_state[element].current != relay_state[element].target){
+            rd_wait_detect_zero(); 
+            if(relay_state[element].target){
+                if(rd_exceed_us(last_time_crl_relay, TIME_DETECT_ON)){
+                    rd_set_relay_hw(RELAY_PIN_ARR[element], relay_state[element].target);
+                    relay_state[element].current = relay_state[element].target;
+                }
+            }else{
+                if(rd_exceed_us(last_time_crl_relay, TIME_DETECT_OFF)){
+                    rd_set_relay_hw(RELAY_PIN_ARR[element], relay_state[element].target);
+                    relay_state[element].current = relay_state[element].target;
+                }
+            }
         }
-    
-        // if(relay_state[element].current != relay_state[element].target){
-        //     rd_wait_detect_zero(); 
-        //     if(relay_state[element].target){
-        //         if(rd_exceed_us(last_time_crl_relay, TIME_DETECT_ON)){
-        //             rd_set_relay_hw(RELAY_PIN_ARR[element], relay_state[element].target);
-        //             relay_state[element].current = relay_state[element].target;
-        //         }
-        //     }else{
-        //         if(rd_exceed_us(last_time_crl_relay, TIME_DETECT_OFF)){
-        //             rd_set_relay_hw(RELAY_PIN_ARR[element], relay_state[element].target);
-        //             relay_state[element].current = relay_state[element].target;
-        //         }
-        //     }
-        // }
+    #endif
     }
 }
 
 
 static void rd_led_relay_task(void *arg){
     rd_gpio_init();
+    led_init();
     rd_queue = xQueueCreate(5, sizeof(rd_queue_led_relay)); //max 5 phan tu
     while (1)
     {
+        rd_scan_btn();
         update_control_led_relay();
         vTaskDelay(10/portTICK_PERIOD_MS);
+
     }
 }
 
 void rd_led_relay_init(void)
 {
-    xTaskCreate(rd_led_relay_task, "rd_led_relay_task", 2048, NULL, configMAX_PRIORITIES-3, NULL);
+    xTaskCreate(rd_led_relay_task, "rd_led_relay_task", 2048, NULL, 5, NULL);
 }
 
 

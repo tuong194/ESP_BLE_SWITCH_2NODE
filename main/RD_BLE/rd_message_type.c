@@ -1,7 +1,6 @@
 #include "rd_message_control.h"
 #include "rd_ble_mesh.h"
 
-extern rd_led_state led_state[NUM_ELEMENT];
 #define TAG "RD_MESS_TYPE"
 
 extern esp_ble_mesh_model_t vnd_models[];
@@ -65,6 +64,11 @@ void RD_Message_Type(esp_ble_mesh_model_cb_param_t *param)  // E0
         RD_Rsp_GW_Addr.Future[1] = PROVIDER_SUB;
         RD_Rsp_GW_Addr.Future[2] = 0x00;
         RD_Rsp_GW_Addr.Future[3] = 0x00;
+
+        buff_rsp = (uint8_t *)(&RD_Rsp_GW_Addr.Header[0]);
+        
+        rd_rsp_opcode_E0(param, buff_rsp);
+
         break;
     case RD_GET_TYPE_AND_AES:
         printf("get type\n");
@@ -78,6 +82,7 @@ void RD_Message_Type(esp_ble_mesh_model_cb_param_t *param)  // E0
         RD_Mess_Recevie.Future[2] = VERSION_SUB;
 
         buff_rsp = (uint8_t *)(&RD_Mess_Recevie.Header[0]);
+        
         rd_rsp_opcode_E0(param, buff_rsp);
         break;
     default:
@@ -90,9 +95,15 @@ void RD_Message_Type(esp_ble_mesh_model_cb_param_t *param)  // E0
 
 void rd_rsp_opcode_E0(esp_ble_mesh_model_cb_param_t *param, uint8_t *par)
 {
+    printf("data rsp: ");
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        printf("0x%02x ", par[i]);
+    }
+    printf("\n");
     esp_err_t err = esp_ble_mesh_server_model_send_msg(&vnd_models[0],
                                                        param->model_operation.ctx, RD_OPCDOE_TYPE_RSP,
-                                                       sizeof(par), par);
+                                                       8, par);
     if (err)
     {
         ESP_LOGE(TAG, "Failed to send message 0x%06x", RD_OPCDOE_TYPE_RSP);

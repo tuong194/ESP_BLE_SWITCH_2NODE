@@ -4,6 +4,8 @@ set(srcs "main.c"
         "RD_BLE/rd_message_type.c" 
         "RD_BLE/rd_type_device.c" 
         "RD_Control/rd_control_led_rl.c"
+        "RD_Control/LC8823.c"
+        "RD_Control/rd_button.c"
         "RD_Peripheral/rd_gpio.c"
         "RD_Peripheral/rd_flash.c"
         

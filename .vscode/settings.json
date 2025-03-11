@@ -5,7 +5,7 @@
     "idf.openOcdConfigs": [
         "board/esp32c3-builtin.cfg"
     ],
-    "idf.portWin": "COM33",
+    "idf.portWin": "COM35",
     "idf.toolsPathWin": "c:\\ESP_IDF\\tool_v5.3.2",
     "idf.flashType": "UART",
     "idf.customExtraVars": {
@@ -16,6 +16,8 @@
     },
     "files.associations": {
         "cstdlib": "c",
-        "rd_ble_mesh.h": "c"
+        "rd_ble_mesh.h": "c",
+        "esp_ble_mesh_networking_api.h": "c",
+        "esp_ble_mesh_config_model_api.h": "c"
     }
 }
