@@ -18,6 +18,11 @@
         "cstdlib": "c",
         "rd_ble_mesh.h": "c",
         "esp_ble_mesh_networking_api.h": "c",
-        "esp_ble_mesh_config_model_api.h": "c"
+        "esp_ble_mesh_config_model_api.h": "c",
+        "rd_message_control.h": "c",
+        "ble_mesh_example_init.h": "c",
+        "rd_message_type.h": "c",
+        "esp_ble_mesh_provisioning_api.h": "c",
+        "esp_ble_mesh_time_scene_model_api.h": "c"
     }
 }

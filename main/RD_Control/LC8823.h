@@ -2,7 +2,11 @@
 
 #include <stdio.h>
 #include "esp_rom_sys.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 #include "../RD_Peripheral/rd_gpio.h"
+
 
 
 #define FREQ_LED 25000
@@ -54,4 +58,5 @@ void LC8823_update_stt(void);
 void led_set_stt(uint8_t num_led, uint8_t stt);
 void led_set_control(uint8_t num_led);
 void led_init(void);
+void blink_all_led(uint8_t num_blink);
 

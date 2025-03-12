@@ -65,16 +65,16 @@ void set_data_led(uint8_t lightness, uint8_t blue, uint8_t green, uint8_t red){
 void LC8823_update_stt(void){
     start_frame_led();
 
-    set_data_led(led_switch[LED_1].led_data.lum, led_switch[LED_1].led_data.blue, led_switch[LED_1].led_data.green, led_switch[LED_1].led_data.red);  // element 1
+    set_data_led(led_switch[LED_1].led_data.lum, led_switch[LED_1].led_data.blue, led_switch[LED_1].led_data.green, led_switch[LED_1].led_data.red);  // element 0
     set_data_led(led_switch[LED_1].led_data.lum, led_switch[LED_1].led_data.blue, led_switch[LED_1].led_data.green, led_switch[LED_1].led_data.red); 
 
-    set_data_led(led_switch[LED_2].led_data.lum, led_switch[LED_2].led_data.blue, led_switch[LED_2].led_data.green, led_switch[LED_2].led_data.red);  // element 2
+    set_data_led(led_switch[LED_2].led_data.lum, led_switch[LED_2].led_data.blue, led_switch[LED_2].led_data.green, led_switch[LED_2].led_data.red);  // element 1
     set_data_led(led_switch[LED_2].led_data.lum, led_switch[LED_2].led_data.blue, led_switch[LED_2].led_data.green, led_switch[LED_2].led_data.red); 
     
-    set_data_led(led_switch[LED_3].led_data.lum, led_switch[LED_3].led_data.blue, led_switch[LED_3].led_data.green, led_switch[LED_3].led_data.red);  // element 3
+    set_data_led(led_switch[LED_3].led_data.lum, led_switch[LED_3].led_data.blue, led_switch[LED_3].led_data.green, led_switch[LED_3].led_data.red);  // element 2
     set_data_led(led_switch[LED_3].led_data.lum, led_switch[LED_3].led_data.blue, led_switch[LED_3].led_data.green, led_switch[LED_3].led_data.red); 
     
-    set_data_led(led_switch[LED_4].led_data.lum, led_switch[LED_4].led_data.blue, led_switch[LED_4].led_data.green, led_switch[LED_4].led_data.red);  // element 4
+    set_data_led(led_switch[LED_4].led_data.lum, led_switch[LED_4].led_data.blue, led_switch[LED_4].led_data.green, led_switch[LED_4].led_data.red);  // element 3
     set_data_led(led_switch[LED_4].led_data.lum, led_switch[LED_4].led_data.blue, led_switch[LED_4].led_data.green, led_switch[LED_4].led_data.red); 
     
     set_data_led(led_switch[LED_WIFI].led_data.lum, led_switch[LED_WIFI].led_data.blue, led_switch[LED_WIFI].led_data.green, led_switch[LED_WIFI].led_data.red);  // led wifi
@@ -114,6 +114,32 @@ void led_init(void){
     LC8823_update_stt();
 }
 
+void control_all_led(uint8_t stt){
+    for(uint8_t i = 0; i< NUM_ELEMENT; i++){
+        led_set_stt(i, 1);
+        led_switch[i].led_data.lum = stt ? LIGHT_MAX : LIGHT_MIN;
+    }
+    LC8823_update_stt();
+}
+
+void blink_all_led(uint8_t num_blink){
+    static uint8_t stt = 0;
+    uint8_t stt_led_current[NUM_ELEMENT] = {
+        led_switch[0].current, led_switch[1].current, led_switch[2].current, led_switch[3].current, 
+    };
+    for(uint8_t i = 0; i< num_blink; i++){
+        stt = !stt;
+        control_all_led(stt);
+        vTaskDelay(300/portTICK_PERIOD_MS);
+    }
+    stt = 0;
+    for(uint8_t i = 0; i< NUM_ELEMENT; i++){
+        led_set_stt(i, stt_led_current[i]);
+        led_switch[i].led_data.lum = stt_led_current[i] ? LIGHT_MAX : LIGHT_MIN;
+
+    }
+    LC8823_update_stt();
+}
 
 
 

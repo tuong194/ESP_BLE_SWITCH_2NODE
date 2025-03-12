@@ -5,6 +5,7 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_ble_mesh_networking_api.h"
 
 #include "../RD_Peripheral/rd_gpio.h"
 #include "../RD_lib.h"
@@ -19,6 +20,8 @@
 
 #define TIME_CYCLE_SCAN_BTN         5000 //us
 #define COUNT_CYCLE_ACTIVE_BTN      5
+#define TIME_CHECK_KICK_OUT         3*1000*1000  //us
+#define TIME_OUT_KICK_OUT           10*1000*1000
 typedef enum
 {
 	But_None	= 0x00U,
@@ -28,3 +31,4 @@ typedef enum
 
 void rd_scan_btn(void);
 void rd_scan_btn_v2(void);
+void check_time_kick_out(void);

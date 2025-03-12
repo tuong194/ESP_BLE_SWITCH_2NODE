@@ -113,6 +113,7 @@ static void rd_led_relay_task(void *arg){
     {
         //rd_scan_btn();
         rd_scan_btn_v2();
+        check_time_kick_out();
         update_control_led_relay();
         vTaskDelay(10/portTICK_PERIOD_MS);
 
