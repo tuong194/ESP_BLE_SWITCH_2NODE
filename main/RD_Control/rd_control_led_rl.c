@@ -111,7 +111,8 @@ static void rd_led_relay_task(void *arg){
     rd_queue = xQueueCreate(5, sizeof(rd_queue_led_relay)); //max 5 phan tu
     while (1)
     {
-        rd_scan_btn();
+        //rd_scan_btn();
+        rd_scan_btn_v2();
         update_control_led_relay();
         vTaskDelay(10/portTICK_PERIOD_MS);
 

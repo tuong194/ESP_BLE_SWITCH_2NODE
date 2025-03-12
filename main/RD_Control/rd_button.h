@@ -18,6 +18,7 @@
 #define	TYPE_HARDWARE_SWITCH		X4_TOUCH_SWITCH
 
 #define TIME_CYCLE_SCAN_BTN         5000 //us
+#define COUNT_CYCLE_ACTIVE_BTN      5
 typedef enum
 {
 	But_None	= 0x00U,
@@ -26,3 +27,4 @@ typedef enum
 } Button_Stt_Type_t;
 
 void rd_scan_btn(void);
+void rd_scan_btn_v2(void);
