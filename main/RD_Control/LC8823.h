@@ -15,7 +15,7 @@
 #define START_FRAME  0x00
 #define END_FRAME    0xff
 #define LIGHT_MAX    0xff  //100%
-#define LIGHT_MIN    0xE3  //3/31 = 20%
+#define LIGHT_MIN    0xE2  //2/31 = 20%
 #define EN_COLOR     0xff
 #define DIS_COLOR    0x00
 #define ON_STT       1
@@ -24,9 +24,9 @@
 typedef enum 
 {
     LED_1 = 0,
+    LED_4,
     LED_2,
     LED_3,
-    LED_4,
     LED_WIFI
 }rd_led;
 

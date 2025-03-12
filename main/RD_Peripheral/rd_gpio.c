@@ -1,6 +1,6 @@
 #include "rd_gpio.h"
 
-gpio_num_t BUTTON_PIN_ARR[NUM_ELEMENT] = {BUTTON_PIN1, BUTTON_PIN3, BUTTON_PIN4, BUTTON_PIN2};
+gpio_num_t BUTTON_PIN_ARR[NUM_ELEMENT] = {BUTTON_PIN1, BUTTON_PIN2, BUTTON_PIN3, BUTTON_PIN4};
 gpio_num_t RELAY_PIN_ARR[NUM_ELEMENT] = {RELAY1_PIN, RELAY2_PIN, RELAY3_PIN, RELAY4_PIN};
 
 static void gpio_set_pin_input(gpio_num_t GPIO_NUM, gpio_int_type_t INTR_TYPE)

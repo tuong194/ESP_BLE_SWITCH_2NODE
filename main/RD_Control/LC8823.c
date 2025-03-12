@@ -107,7 +107,7 @@ void led_init(void){
 
     led_switch[LED_WIFI].current = 1;
     led_switch[LED_WIFI].target = 1;
-    led_switch[LED_WIFI].led_data.lum = LIGHT_MAX;
+    led_switch[LED_WIFI].led_data.lum = LIGHT_MIN;
     led_switch[LED_WIFI].led_data.blue = DIS_COLOR;
     led_switch[LED_WIFI].led_data.green = DIS_COLOR;
     led_switch[LED_WIFI].led_data.red = EN_COLOR;
