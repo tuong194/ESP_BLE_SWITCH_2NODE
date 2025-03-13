@@ -84,22 +84,22 @@ static esp_ble_mesh_gen_onoff_srv_t onoff_server_3 = {
     },
 };
 
-static esp_ble_mesh_model_t root_models[] = {
+esp_ble_mesh_model_t root_models[] = {  // node goc
     ESP_BLE_MESH_MODEL_CFG_SRV(&config_server),
     ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_0, &onoff_server_0), // onoff server
     // ESP_BLE_MESH_MODEL_SCENE_SRV(&scene_srv_pub, &scene_srv_data), // Scene Server: call, store scene (can provisioner)
     // ESP_BLE_MESH_MODEL_SCENE_SETUP_SRV(&scene_setup_srv_pub, &scene_setup_srv_data), //RD_NOTE: node tự add, del scene
 };
 
-static esp_ble_mesh_model_t extern_models1[] = {
+esp_ble_mesh_model_t sig_models1[] = {
     ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_1, &onoff_server_1),
 };
 
-static esp_ble_mesh_model_t extern_models2[] = {
+esp_ble_mesh_model_t sig_models2[] = {
     ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_2, &onoff_server_2),
 };
 
-static esp_ble_mesh_model_t extern_models3[] = {
+esp_ble_mesh_model_t sig_models3[] = {
     ESP_BLE_MESH_MODEL_GEN_ONOFF_SRV(&onoff_pub_3, &onoff_server_3),
 };
 
@@ -146,9 +146,9 @@ esp_ble_mesh_model_t vnd_models3[] = {
 
 static esp_ble_mesh_elem_t elements[] = {
     ESP_BLE_MESH_ELEMENT(0, root_models, vnd_models),
-    ESP_BLE_MESH_ELEMENT(0, extern_models1, vnd_models1),
-    ESP_BLE_MESH_ELEMENT(0, extern_models2, vnd_models2),
-    ESP_BLE_MESH_ELEMENT(0, extern_models3, vnd_models3),
+    ESP_BLE_MESH_ELEMENT(0, sig_models1, vnd_models1),
+    ESP_BLE_MESH_ELEMENT(0, sig_models2, vnd_models2),
+    ESP_BLE_MESH_ELEMENT(0, sig_models3, vnd_models3),
 };
 
 static esp_ble_mesh_comp_t composition = {
@@ -176,6 +176,11 @@ static void rd_kick_out(void)
     esp_ble_mesh_node_local_reset(); // resset mang
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     esp_restart();
+}
+
+static void get_appkey_netkey_idx(esp_ble_mesh_msg_ctx_t ctx){
+    ESP_LOGI(TAG, "app_idx: 0x%04X", ctx.app_idx);
+    ESP_LOGI(TAG, "net_idx: 0x%04X", ctx.net_idx);
 }
 
 static void example_ble_mesh_provisioning_cb(esp_ble_mesh_prov_cb_event_t event,
@@ -264,13 +269,13 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
             RD_Message_Control(param);
         }
         break;
-    case ESP_BLE_MESH_MODEL_SEND_COMP_EVT:
+    case ESP_BLE_MESH_MODEL_SEND_COMP_EVT: //RD_NOTE: log send msg from element
         if (param->model_send_comp.err_code)
         {
             ESP_LOGE(TAG, "Failed to send message 0x%06" PRIx32, param->model_send_comp.opcode);
             break;
         }
-        ESP_LOGI(TAG, "Send rsp_opcode: 0x%06" PRIx32, param->model_send_comp.opcode);
+        ESP_LOGI(TAG, "Element: %u, Send rsp_opcode: 0x%06" PRIx32,param->model_send_comp.model->element_idx , param->model_send_comp.opcode);
         break;
     default:
         break;
@@ -292,6 +297,7 @@ static void example_ble_mesh_generic_server_cb(esp_ble_mesh_generic_server_cb_ev
         if (param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_SET ||
             param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_SET_UNACK)
         {
+            get_appkey_netkey_idx(param->ctx); // RD_NOTE: get appkey, netkey idx
             ESP_LOGI(TAG, "onoff 0x%02x", param->value.state_change.onoff_set.onoff);
             rd_mess_on_off_led(param->model, &param->ctx, param->value.state_change.onoff_set.onoff);
         }

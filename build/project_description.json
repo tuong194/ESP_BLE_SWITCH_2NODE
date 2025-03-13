@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "esp_ble_switch_2",
-    "project_version":    "312b533-dirty",
+    "project_version":    "1a4e0da-dirty",
     "project_path":       "E:/ESP32/My_Code/esp_ble_switch_2",
     "idf_path":           "C:/ESP_IDF/v5.3.2/esp-idf",
     "build_dir":          "E:/ESP32/My_Code/esp_ble_switch_2/build",

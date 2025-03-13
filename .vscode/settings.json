@@ -23,6 +23,9 @@
         "ble_mesh_example_init.h": "c",
         "rd_message_type.h": "c",
         "esp_ble_mesh_provisioning_api.h": "c",
-        "esp_ble_mesh_time_scene_model_api.h": "c"
+        "esp_ble_mesh_time_scene_model_api.h": "c",
+        "bitset": "c",
+        "string_view": "c",
+        "regex": "c"
     }
 }

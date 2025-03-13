@@ -135,13 +135,14 @@ void blink_all_led(uint8_t num_blink){
     stt = 0;
     for(uint8_t i = 0; i< NUM_ELEMENT; i++){
         led_set_stt(i, stt_led_current[i]);
+        led_switch[i].current = led_switch[i].target;
         led_switch[i].led_data.lum = stt_led_current[i] ? LIGHT_MAX : LIGHT_MIN;
 
     }
     LC8823_update_stt();
 }
 
-
+ 
 
 
 
